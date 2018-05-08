@@ -3,6 +3,7 @@
 
 // TODO: Move to ports.asm
 
+#ifdef ARCH_i386
 unsigned char inb (unsigned short port)
 {
     unsigned char rv;
@@ -56,3 +57,4 @@ bool ints_get_enabled()
     __asm__ __volatile__ ("pushf; pop %0" : "=g"(flags) );
     return flags & (1 << 9);
 }
+#endif

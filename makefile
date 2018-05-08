@@ -40,8 +40,6 @@ i386-compile-c:
 
 generic-compile-c:
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/main.o $(SRCPATH)c/main.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/timer.o $(SRCPATH)c/drivers/timer.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/rtc.o $(SRCPATH)c/drivers/rtc.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/math.o $(SRCPATH)c/helpers/math.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/string.o $(SRCPATH)c/helpers/string.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/stdtypes.o $(SRCPATH)c/helpers/stdtypes.c

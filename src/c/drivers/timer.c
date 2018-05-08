@@ -1,3 +1,6 @@
+/* This file doesn't get compiled.
+ * It's here just for reference */
+
 #include <time.h>
 #include <desctables.h> // irq_install_handler
 

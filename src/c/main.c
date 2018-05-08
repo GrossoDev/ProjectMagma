@@ -7,7 +7,6 @@
 #include <sys/system.h> // sys_loadprocess
 #include <desctables.h> // GDT, IDT and functions to add ISRs and IRQ handlers.
 #include <math.h>       // Some math goodies
-#include <time.h>       // The PIT (a timer) and the RTC (real time clock)
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -17,27 +16,18 @@
 
 void main()
 {
-    // Initialize descriptor tables
+    // Initialize interrupts
+    #ifdef ARCH_i386
     gdt_install();
     idt_install();
     isrs_install();
     irq_install();
-    // Initialize timer
-    timer_install();
+    #endif
 
-    ////////////////////////////////////////////////////////////
-    // Do some testing by now
+    // Do some testing for now /////////////////////////////////
     #ifdef DEBUG
 
     kernel_lineString("\r\nProject Magma");
-    
-    kernel_putString("Current GMT-3 time: ");
-    char buffer[16];
-    itoa( math_roll(rtc_get_utchour()-3,24), buffer, 10); kernel_putString(buffer);
-    kernel_putString(":");
-    itoa( math_roll(rtc_get_utcminute(),60), buffer, 10); kernel_putString(buffer);
-    kernel_putString(":");
-    itoa( math_roll(rtc_get_utcsecond(),60), buffer, 10); kernel_lineString(buffer);
 
     #endif
     ////////////////////////////////////////////////////////////
