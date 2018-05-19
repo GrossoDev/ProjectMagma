@@ -1,7 +1,5 @@
-; This is the kernel's entry point. We could either call main here,
-; or we can use this to setup the stack or other nice stuff, like
-; perhaps setting up the GDT and segments.
-; Important: The C "main()" function sets up the interrupts,
+; This is the kernel's entry point. We call "main()" here.
+; Important: The "main()" function sets up the interrupts,
 ; so it's useless to raise them.
 [BITS 32]
 global start
@@ -19,7 +17,7 @@ mboot:
     MULTIBOOT_AOUT_KLUDGE	equ 1<<16
     MULTIBOOT_HEADER_MAGIC	equ 0x1BADB002
     MULTIBOOT_HEADER_FLAGS	equ MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_AOUT_KLUDGE
-    MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
+    MULTIBOOT_CHECKSUM	    equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
     EXTERN code, bss, end
 
     ; This is the GRUB Multiboot header. A boot signature
@@ -35,16 +33,22 @@ mboot:
     dd end
     dd start
 
-; Here we call the main() function in C.
+; Here we call the "main()" function in C.
 stublet:
     extern main
     call main
-    jmp $
+    call testcall   ; Test system call
+    jmp $           ; We are doing a bad job if we get here
+
+testcall:
+    mov eax, 0h
+    int 42h
+    ret
 
 ; Here is the definition of our BSS section. Right now, we'll use
 ; it just to store the stack. Remember that a stack actually grows
 ; downwards, so we declare the size of the data before declaring
 ; the identifier '_sys_stack'
 SECTION .bss
-    resb 8192               ; This reserves 8KiBs of memory here
+    resb 8192       ; This reserves 8KiBs of memory here
 _sys_stack:

@@ -4,9 +4,10 @@
  * <stdarg.h>
  */
 #include <sys/io.h>
-#include <sys/system.h> // sys_loadprocess
-#include <desctables.h> // GDT, IDT and functions to add ISRs and IRQ handlers.
-#include <math.h>       // Some math goodies
+#include <sys/system.h>   // sys_loadprocess
+#include <sys/syscalls.h> // syscall_install
+#include <desctables.h>   // GDT, IDT and functions to add ISRs and IRQ handlers.
+#include <math.h>         // Some math goodies
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -22,6 +23,8 @@ void main()
     idt_install();
     isrs_install();
     irq_install();
+    
+    syscall_install(0x42);
     #endif
 
     // Do some testing for now /////////////////////////////////
