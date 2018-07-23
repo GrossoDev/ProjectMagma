@@ -1,8 +1,9 @@
 #include <sys/syscalls.h>
-#include <desctables.h>
+#include <sys/desctables.h>
 
 #include <debug.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <stdint.h>
 
 // syscall.asm
@@ -27,18 +28,21 @@ void syscall_handler(struct regs_t *r)
 
     kernel_lineString("\r\nSyscall!");
 
+    kernel_putString("Syscall's function number: ");
     itoa(r_ax, buffer, 16);
     kernel_lineString(buffer);
     #endif
     
-    void (*handler)(struct regs_t *r) = handlers[0];
-    handler(r);
+    void (*handler)(struct regs_t *r) = handlers[r->eax];
+    if (handler == NULL) r->eax = (int)0;
+    else handler(r);
 
     #ifdef DEBUG
     r_ax = r->eax;
 
     char* ax_r = (char*)r_ax;
 
+    kernel_putString("Returned: ");
     kernel_lineString(ax_r);
     #endif
 }

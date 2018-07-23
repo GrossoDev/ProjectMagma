@@ -1,5 +1,5 @@
 #include <string.h>     // memset
-#include <desctables.h>
+#include <sys/desctables.h>
 
 /* Defines an IDT entry */
 struct idt_entry

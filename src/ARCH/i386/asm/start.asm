@@ -1,11 +1,8 @@
-; This is the kernel's entry point. We call "main()" here.
-; Important: The "main()" function sets up the interrupts,
-; so it's useless to raise them.
 [BITS 32]
 global start
-start:
-    mov esp, _sys_stack     ; This points the stack to our new stack area
-    jmp stublet
+start:                  ; The kernel's bootstrap
+    mov esp, _sys_stack ; This points the stack to our new stack area
+    jmp entry
 
 ; This part MUST be 4byte aligned, so we solve that issue using 'ALIGN 4'
 ; This is what grub has to recognize to bootup the kernel.
@@ -33,22 +30,24 @@ mboot:
     dd end
     dd start
 
-; Here we call the "main()" function in C.
-stublet:
-    extern main
-    call main
-    call testcall   ; Test system call
-    jmp $           ; We are doing a bad job if we get here
+; "kernel_setup()" is in C.
+entry:
+    extern kernel_setup
+    call kernel_setup
+    call prepair_entryprocess ; Prepair the OS' bootstrap
+hlt_loop:
+    hlt
+    jmp hlt_loop    ; We'll have headaches if we get here
 
-testcall:
-    mov eax, 0h
-    int 42h
+prepair_entryprocess:
     ret
 
-; Here is the definition of our BSS section. Right now, we'll use
-; it just to store the stack. Remember that a stack actually grows
-; downwards, so we declare the size of the data before declaring
+; Remember that a stack actually grows downwards, so
+; we declare the size of the data before declaring
 ; the identifier '_sys_stack'
 SECTION .bss
-    resb 8192       ; This reserves 8KiBs of memory here
-_sys_stack:
+global _sys_log
+_sys_log:       ; The log grows upwards
+    resb 64         ; This reserves the log here
+    resb 8192       ; and the stack here
+_sys_stack:     ; Remember, the stack grows downwards

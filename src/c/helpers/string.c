@@ -83,6 +83,19 @@ size_t strlen(const char *str)
     return retval;
 }
 
+char *strcpy(char *dest, const char *src)
+{
+    // Copy contents of src[] to dest[]
+    int i = 0;
+    do
+    {
+        dest[i] = src[i];
+    }
+    while (src[i++] != '\0');
+
+    return dest;
+}
+
 // A utility function to reverse a string
 void reverse(char s[])
 {

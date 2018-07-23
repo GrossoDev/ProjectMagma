@@ -1,7 +1,7 @@
 #ifndef __SYSCALLS_H
 #define __SYSCALLS_H
 
-#include <desctables.h>
+#include <sys/desctables.h>
 
 extern void syscall_install(int int_no);
 extern void syscall_installhandler(void* handler);

@@ -12,5 +12,6 @@ extern void *memsetd(void *dest, uint32_t c, int len);
 extern void *memsetl(void *dest, uint64_t c, int len);
 
 extern size_t strlen(const char *str); // A utility function to get the size of a string
+extern char *strcpy(char *dest, const char *src);
 
 #endif

@@ -1,4 +1,4 @@
-#include <desctables.h>
+#include <sys/desctables.h>
 
 /* Defines a GDT entry */
 struct gdt_entry

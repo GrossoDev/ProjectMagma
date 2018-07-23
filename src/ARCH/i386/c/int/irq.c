@@ -1,5 +1,5 @@
 #include <sys/io.h>
-#include <desctables.h>
+#include <sys/desctables.h>
 
 /* These are own ISRs that point to our special IRQ handler
 *  instead of the regular 'fault_handler' function */
