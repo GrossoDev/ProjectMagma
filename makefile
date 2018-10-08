@@ -30,6 +30,7 @@ i386-compile-asm:
 	nasm -f elf -o $(BUILDPATH)1-compile/asm-idt.o $(SRCPATH)ARCH/i386/asm/idt.asm
 	nasm -f elf -o $(BUILDPATH)1-compile/asm-irqs.o $(SRCPATH)ARCH/i386/asm/irqs.asm
 	nasm -f elf -o $(BUILDPATH)1-compile/asm-syscall.o $(SRCPATH)ARCH/i386/asm/syscall.asm
+	nasm -f elf -o $(BUILDPATH)1-compile/asm-paging.o $(SRCPATH)ARCH/i386/asm/paging.asm
 
 i386-compile-c:
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/gdt.o $(SRCPATH)ARCH/i386/c/int/gdt.c
@@ -45,6 +46,7 @@ generic-compile-c:
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/string.o $(SRCPATH)c/helpers/string.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/stdtypes.o $(SRCPATH)c/helpers/stdtypes.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/syscall.o $(SRCPATH)c/syscall.c
+	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/paging.o $(SRCPATH)c/paging.c
 
 i386-link:
 	ld -T $(SRCPATH)link.ld -o $(BUILDPATH)2-link/kernel.bin $(BUILDPATH)1-compile/*.o $(LDFLAGS)

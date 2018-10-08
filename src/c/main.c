@@ -4,11 +4,12 @@
  * <stdarg.h>
  */
 #include <sys/io.h>
-#include <sys/system.h>   // sys_loadprocess
-#include <sys/syscalls.h> // syscall_install
+#include <sys/system.h>     // sys_loadprocess
+#include <sys/syscalls.h>   // syscall_install
 #include <sys/syslog.h>
 #include <sys/desctables.h>   // GDT, IDT and functions to add ISRs and IRQ handlers.
-#include <math.h>         // Some math goodies
+#include <sys/paging.h>     // paging_setup();
+#include <math.h>           // Some math goodies
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -29,10 +30,12 @@ void kernel_setup()
     idt_install();
     isrs_install();
     irq_install();
+    
+    paging_pagekernel();
 
     syscall_install(0x42);
     #endif
-
+    
     // Push current version to the system log
     int syslog_i = 0;
     _sys_log.messages[syslog_i++] = (sysmsg_t){ KERNEL_VER, 0x0001 };

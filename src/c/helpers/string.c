@@ -10,7 +10,8 @@ void *memcpy(void *dest, void *src, size_t n)
     char *cdest = (char *)dest;
 
     // Copy contents of src[] to dest[]
-    for (int i=0; i<n; i++)
+    int i;
+    for (i=0; i<n; i++)
         cdest[i] = csrc[i];
 
     return dest;
@@ -24,12 +25,13 @@ void *memmove(void *dest, void *src, size_t n)
     // Create a temporary array to hold data of src
     char temp[n];
  
+    int i;
     // Copy data from csrc[] to temp[]
-    for (int i=0; i<n; i++)
+    for (i = 0; i < n; i++)
         temp[i] = csrc[i];
  
     // Copy data from temp[] to cdest[]
-    for (int i=0; i<n; i++)
+    for (i = 0; i < n; i++)
         cdest[i] = temp[i];
  
     return dest;
