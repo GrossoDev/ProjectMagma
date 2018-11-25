@@ -38,7 +38,7 @@ typedef union {
     int value;
 } eflags_t;
 
-extern eflags_t get_eflags();
+extern eflags_t get_eflags(void);
 
 extern void ints_set_enabled(bool enable);
 extern bool ints_get_enabled(void);

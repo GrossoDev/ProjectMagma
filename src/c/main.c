@@ -37,11 +37,17 @@ void kernel_setup()
     #endif
     
     // Push current version to the system log
+    // It's splitted in Major, Minor, and Release
     int syslog_i = 0;
-    _sys_log.messages[syslog_i++] = (sysmsg_t){ KERNEL_VER, 0x0001 };
+    _sys_log.messages[syslog_i++] = (sysmsg_t){ KERNEL_VER, 0x00 };
+    _sys_log.messages[syslog_i++] = (sysmsg_t){ KERNEL_VER, 0x00 };
+    _sys_log.messages[syslog_i++] = (sysmsg_t){ KERNEL_VER, 0x01 };
 
     // Do some testing for now /////////////////////////////////
     #ifdef DEBUG
+
+    // If debbuging, push magic word to system log
+    _sys_log.messages[syslog_i++] = (sysmsg_t){ 0xEA, 0xEA };
 
     kernel_lineString("Project Magma");
     kernel_cpuid();

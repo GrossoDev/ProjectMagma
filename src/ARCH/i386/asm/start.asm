@@ -35,9 +35,10 @@ entry:
     extern kernel_setup
     call kernel_setup
     call prepair_entryprocess ; Prepair the OS' bootstrap
-hlt_loop:
+global system_halt
+system_halt:
     hlt
-    jmp hlt_loop    ; We'll have headaches if we get here
+    jmp system_halt    ; We'll have headaches if we get here
 
 prepair_entryprocess:
     ret
@@ -48,6 +49,6 @@ prepair_entryprocess:
 SECTION .bss
 global _sys_log
 _sys_log:       ; The log grows upwards
-    resb 64         ; This reserves the log here
-    resb 8192       ; and the stack here
+    resb 64	    ; This reserves the log here
+    resb 1024	; and the stack here
 _sys_stack:     ; Remember, the stack grows downwards

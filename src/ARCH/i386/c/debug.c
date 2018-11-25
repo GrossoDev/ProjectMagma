@@ -46,35 +46,37 @@ void kernel_lineString(char* str)
     kernel_putString("\r\n");
 }
 
-void kernel_putStacktrace(int max)
+void kernel_printException(struct regs_t *r)
 {
-    void* stackptr;
-    __asm__ __volatile__ ("mov %%esp, %0" : "=a" (stackptr));
+    char buffer[32];
+    
+    kernel_putString(exception_messages[r->int_no]);
+    kernel_lineString(" Exception. System Halted!");
 
-    // First, capture the stack
-    int* addrs[max];
-    int values[max];
+    kernel_putString("==Error code: 0b");
+    itoa((int)r->err_code, buffer, 2);
+    kernel_lineString(buffer);
 
-    int i;
-    for (i = 0; stackptr + i < stackptr + max; i++)
-    {
-        addrs[i]  = (int*)stackptr + i;
-        values[i] = *(addrs[i]);
-    }
+    kernel_putString("==At instruction: 0x");
+    itoa((int)r->eip, buffer, 16);
+    kernel_lineString(buffer);
 
-    // Then write it to the serial
-    char text[10];
-    kernel_lineString("Stack trace: ");
+    kernel_lineString("==Registers:");
 
-    for (i = 0; i < max; i++)
-    {
-        kernel_putString("At: 0x");
-        itoa((int)addrs[i], text, 16);
-        kernel_putString(text);
-        kernel_putString(" = 0x");
-        itoa(values[i], text, 16);
-        kernel_lineString(text);
-    }
+    kernel_putString("====EAX: 0x");
+    itoa((int)r->eax, buffer, 16); kernel_putString(buffer);
+
+    kernel_putString("    EBX: 0x");
+    itoa((int)r->ebx, buffer, 16); kernel_putString(buffer);
+
+    kernel_putString("    ECX: 0x");
+    itoa((int)r->ecx, buffer, 16); kernel_putString(buffer);
+
+    kernel_putString("    EDX: 0x");
+    itoa((int)r->edx, buffer, 16); kernel_lineString(buffer);
+
+    // Add empty line
+    kernel_lineString("");
 }
 
 enum {
@@ -90,18 +92,12 @@ enum {
   CPUID_INTELBRANDSTRINGEND,
 };
 
-extern int last_exception;
-
 bool kernel_cpuid()
 {
     char buffer[64];
     int registers[4];
 
     kernel_lineString("\r\nCPUID: ");
-
-    // Test if CPUID is available
-    asm volatile("cpuid");
-    if (last_exception == 6) return false;
 
     // Request vendor string
     asm volatile("cpuid":"=b"(*(registers)),"=c"(*(registers+2)),"=d"(*(registers+1)):
@@ -180,17 +176,45 @@ bool kernel_cpuid()
     btoa((registers[1] >> 29) & 0b1, buffer);
     kernel_putString(" Long mode supported?: "); kernel_lineString(buffer);
 
-    asm volatile("cpuid":"=a"(*registers),"=b"(*(registers+1)),"=c"(*(registers+2)),"=d"(*(registers+3)):
-        "a"(0x8FFFFFFF));
-
-    for (i = 0; i < 3; i++)
-    {
-        buffer[0+(i*4)] = registers[i];
-        buffer[1+(i*4)] = (registers[i] >> 8);
-        buffer[2+(i*4)] = (registers[i] >> 16);
-        buffer[3+(i*4)] = (registers[i] >> 24);
-    }
-    buffer[12] = '\0';
-
-    kernel_putString(" AMD's easter: "); kernel_lineString(buffer);
+    // Add empty line
+    kernel_lineString("");
 }
+
+unsigned char *exception_messages[] =
+{
+    "Division By Zero",
+    "Debug",
+    "Non Maskable Interrupt",
+    "Breakpoint",
+    "Into Detected Overflow",
+    "Out of Bounds",
+    "Invalid Opcode",
+    "No Coprocessor",
+
+    "Double Fault",
+    "Coprocessor Segment Overrun",
+    "Bad TSS",
+    "Segment Not Present",
+    "Stack Fault",
+    "General Protection Fault",
+    "Page Fault",
+    "Unknown Interrupt",
+
+    "Coprocessor Fault",
+    "Alignment Check",
+    "Machine Check",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved"
+};
