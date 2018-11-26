@@ -111,6 +111,7 @@ void reverse(char s[])
     }
 }
 
+#ifdef DEBUG
 // Implementation of itoa()
 char* itoa(int num, char* str, int base)
 {
@@ -161,3 +162,4 @@ char* btoa(bool value, char* str)
 
     return str;
 }
+#endif

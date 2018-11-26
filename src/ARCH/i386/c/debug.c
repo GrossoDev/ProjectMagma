@@ -1,3 +1,5 @@
+#ifdef DEBUG
+
 #include <debug.h>
 #include <sys/io.h>  // outb()
 #include <stdlib.h>  // itoa()
@@ -213,3 +215,5 @@ unsigned char *exception_messages[] =
     "Reserved",
     "Reserved"
 };
+
+#endif
