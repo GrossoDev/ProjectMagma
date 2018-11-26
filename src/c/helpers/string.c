@@ -152,3 +152,12 @@ char* itoa(int num, char* str, int base)
  
     return str;
 }
+
+// Convert boolean to string
+char* btoa(bool value, char* str)
+{
+    if (value) strcpy(str, "TRUE");
+    else       strcpy(str, "FALSE");
+
+    return str;
+}

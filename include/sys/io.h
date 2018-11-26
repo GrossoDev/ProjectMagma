@@ -11,6 +11,8 @@ extern void outb(unsigned short port, unsigned char data);
 extern void outw(unsigned short port, unsigned short data);
 extern void outl(unsigned short port, unsigned int data);
 
+extern void noop(void);
+
 typedef union {
     struct {
         int carryflag : 1;

@@ -26,11 +26,6 @@ void putChar(char ch)
  
     outb(PORT,ch);
 }
-void btoa(bool value, char* str)
-{
-    if (value) strcpy(str, "TRUE");
-    else       strcpy(str, "FALSE");
-}
 ////////
 void kernel_putString(char* str)
 {

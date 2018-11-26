@@ -31,6 +31,7 @@ i386-compile-asm:
 	nasm -f elf -o $(BUILDPATH)1-compile/asm-irqs.o $(SRCPATH)ARCH/i386/asm/irqs.asm
 	nasm -f elf -o $(BUILDPATH)1-compile/asm-syscall.o $(SRCPATH)ARCH/i386/asm/syscall.asm
 	nasm -f elf -o $(BUILDPATH)1-compile/asm-paging.o $(SRCPATH)ARCH/i386/asm/paging.asm
+	nasm -f elf -o $(BUILDPATH)1-compile/asm-io.o $(SRCPATH)ARCH/i386/asm/io.asm
 
 i386-compile-c:
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/gdt.o $(SRCPATH)ARCH/i386/c/int/gdt.c
@@ -38,13 +39,11 @@ i386-compile-c:
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/irq.o $(SRCPATH)ARCH/i386/c/int/irq.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/isrs.o $(SRCPATH)ARCH/i386/c/int/isrs.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/debug.o $(SRCPATH)ARCH/i386/c/debug.c	
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/lowlevel.o $(SRCPATH)ARCH/i386/c/lowlevel.c
 
 generic-compile-c:
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/main.o $(SRCPATH)c/main.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/math.o $(SRCPATH)c/helpers/math.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/string.o $(SRCPATH)c/helpers/string.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/stdtypes.o $(SRCPATH)c/helpers/stdtypes.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/syscall.o $(SRCPATH)c/syscall.c
 	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/paging.o $(SRCPATH)c/paging.c
 
