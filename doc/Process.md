@@ -14,7 +14,7 @@ struct Process_s {
     Link_s *threads;        // A linked list with pointers to this process’ threads. 
     uint64_t ioAccess[1024];// A bitmap detailing which IO ports does this process have access to.
     uint8_t intNumber;      // The interrupt number that this process is associated with. When any other process calls this interrupt, the kernel will yield execution to it.
-    MsgHead_t *msgStackStart; // The pointer to the start of the message stack (according to the physical address space).
+    MsgHead_t *msgStackStart; // The pointer to the start of the message stack (according to the process' address space).
     uint32_t pageDirectory;   // The index of the process' page directory inside the kernel's page directory table.
 };
 ```
