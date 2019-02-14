@@ -2,9 +2,9 @@
 ## Overview
 A process represents a program running on the system.<br>
 It has a unique identifier (a Process ID or <i>PID</i>) to allow other processes to communicate with each other.
-It represents the permissions, memory pages and the domain in which its [threads](doc/Thread.md) are executed.
+It represents the permissions, memory pages and the domain in which its [threads](Thread.md) are executed.
 ## Structure
-A process has a structure representing it on the kernel's [process table](doc/ProcessTable.md).<br>
+A process has a structure representing it on the kernel's [process table](ProcessTable.md).<br>
 It's declared as follows:
 
 ```
@@ -19,4 +19,4 @@ struct Process_s {
 };
 ```
 
-You can find Link_t in [include/types.h](include/types.h) and MsgHead_t in [include/sys/ipc.h](include/sys/ipc.h).
+You can find Link_t in [include/types.h](/include/types.h) and MsgHead_t in [include/sys/ipc.h](/include/sys/ipc.h).
