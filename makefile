@@ -1,62 +1,46 @@
-CFLAGS      := -m32 -fno-stack-protector -ffreestanding -fno-builtin -O -g -I ./include/ -D DEBUG -D ARCH_i386
-LDFLAGS     := -m elf_i386
-SRCPATH     := ./src/
-BUILDPATH   := ./build/
-BINPATH     := ./bin/
-INSTALLPATH := /magma/latest-build/
+NASMFLAGS := -f elf -i src/arch/i386/
+LDFLAGS   := -m elf_i386
+
+debug:
+	make structure
+	make i386-compile
+	make i386-compile-debug
+	make i386-link
+	make iso
 
 i386:
+	make structure
 	make i386-compile
 	make i386-link
+	make iso
 	make clean
 
-i386-grub:
-	make i386-compile
-	make i386-link
-	make grub
-	make clean
+structure:
+	mkdir -p bin
+	mkdir -p build
+	mkdir -p build/1-compile
+	mkdir -p build/2-link
+	mkdir -p build/3-grub
 
 i386-compile:
-	make i386-compile-asm
-	make generic-compile-c
-	make i386-compile-c
-
-i386-compile-asm:
-	# HACK: Put 01 at the start of the filename
-	# so it's the first one to be read by any
-	# command that uses the wildcard (*)
-	nasm -f elf -o $(BUILDPATH)1-compile/01-start.o $(SRCPATH)ARCH/i386/asm/start.asm
-	nasm -f elf -o $(BUILDPATH)1-compile/asm-gdt.o $(SRCPATH)ARCH/i386/asm/gdt.asm
-	nasm -f elf -o $(BUILDPATH)1-compile/asm-idt.o $(SRCPATH)ARCH/i386/asm/idt.asm
-	nasm -f elf -o $(BUILDPATH)1-compile/asm-irqs.o $(SRCPATH)ARCH/i386/asm/irqs.asm
-	nasm -f elf -o $(BUILDPATH)1-compile/asm-syscall.o $(SRCPATH)ARCH/i386/asm/syscall.asm
-	nasm -f elf -o $(BUILDPATH)1-compile/asm-paging.o $(SRCPATH)ARCH/i386/asm/paging.asm
-	nasm -f elf -o $(BUILDPATH)1-compile/asm-io.o $(SRCPATH)ARCH/i386/asm/io.asm
-
-i386-compile-c:
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/gdt.o $(SRCPATH)ARCH/i386/c/int/gdt.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/idt.o $(SRCPATH)ARCH/i386/c/int/idt.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/irq.o $(SRCPATH)ARCH/i386/c/int/irq.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/isrs.o $(SRCPATH)ARCH/i386/c/int/isrs.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/debug.o $(SRCPATH)ARCH/i386/c/debug.c	
-
-generic-compile-c:
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/main.o $(SRCPATH)c/main.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/math.o $(SRCPATH)c/helpers/math.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/string.o $(SRCPATH)c/helpers/string.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/syscall.o $(SRCPATH)c/syscall.c
-	gcc $(CFLAGS) -c -o $(BUILDPATH)1-compile/paging.o $(SRCPATH)c/paging.c
+	nasm $(NASMFLAGS) -o build/1-compile/01-multiboot-bootstrap.o src/arch/i386/boot/multiboot-bootstrap.asm
+	nasm $(NASMFLAGS) -o build/1-compile/kernel_install.o src/arch/i386/kernel_install.asm
+	
+i386-compile-debug:
+	nasm $(NASMFLAGS) -o build/1-compile/debug_install.o src/arch/i386/debug/debug_install.asm
+	nasm $(NASMFLAGS) -o build/1-compile/debug_vga_driver.o src/arch/i386/debug/debug_vga_driver.asm
+	nasm $(NASMFLAGS) -o build/1-compile/debug_serial_driver.o src/arch/i386/debug/debug_serial_driver.asm
 
 i386-link:
-	ld -T $(SRCPATH)link.ld -o $(BUILDPATH)2-link/kernel.bin $(BUILDPATH)1-compile/*.o $(LDFLAGS)
-	mcopy -n $(BUILDPATH)2-link/kernel.bin $(BINPATH)
+	ld -T src/link.ld -o build/2-link/kernel.bin build/1-compile/*.o $(LDFLAGS)
+	mcopy -n build/2-link/kernel.bin bin
 
-grub: $(SRCPATH)grub/boot/grub/grub.cfg
-	cp -R ./src/grub/boot ./build/3-grub
-	mcopy -n $(BUILDPATH)2-link/kernel.bin $(BUILDPATH)3-grub/
-	grub-mkrescue -o ./bin/magma.iso $(BUILDPATH)3-grub/
+iso: src/grub/boot/grub/grub.cfg
+	cp -R src/grub/boot build/3-grub
+	mcopy -n bin/kernel.bin build/3-grub/
+	grub-mkrescue -o bin/magma.iso build/3-grub/
 
 clean:
-	rm -rf $(BUILDPATH)1-compile/*.*
-	rm -rf $(BUILDPATH)2-link/*.*
-	rm -rf $(BUILDPATH)3-grub/*.*
+	rm -rf build/1-compile/*.*
+	rm -rf build/2-link/*.*
+	rm -rf build/3-grub/*.*

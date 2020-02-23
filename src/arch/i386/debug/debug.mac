@@ -1,0 +1,12 @@
+%ifndef DEBUG_MAC
+%ifdef DEBUG
+
+    %define INSTALL_VGA    0x1
+    %define INSTALL_SERIAL 0x2
+
+    %ifndef DEBUG_INSTALL_ASM
+        extern debug_install
+    %endif
+
+%endif
+%endif
