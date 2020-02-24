@@ -3,16 +3,14 @@
 ; Configured for COM1 (0x3F8), 9600 bauds 8N1
 
 [BITS 32]
-
-global debug_install_serial, serial_put_char
-
 %define PORT 0x3F8
-
 
 %macro serial 2
     mov al, %2
     out PORT + %1, al
 %endmacro
+
+global debug_install_serial, serial_put_char
 
 
 debug_install_serial:
@@ -29,18 +27,25 @@ debug_install_serial:
     
     serial 4, 0x0B		; Reenable interrupts and set RTS & DTR to HIGH
 
-    ret
+    mov byte [serial_installed], 0x1
 
+    ret
 
 
 ; Sends a character through the serial port
 ; The character to send is to be passed through AL
 serial_put_char:
+    ; Check if the Serial output is enabled
+    test byte [serial_installed], 0x1
+    jnz .serial_enabled
+        ret
+    .serial_enabled:
+
     push ax				; serial_transmit_ready will use AL
 
-    wait_to_transmit:
+    .wait_to_transmit:
         call serial_transmit_ready
-    jnz wait_to_transmit
+    jnz .wait_to_transmit
 
     pop ax
     serial 0, al
@@ -54,3 +59,7 @@ serial_transmit_ready:
     in al, PORT + 5		; From the Line status register
     test al, 0x20		; Check the Transmit Holding Register Empty flag
     ret
+
+
+SECTION .bss
+serial_installed: db 0  ; Flag that represents if this output is enabled
