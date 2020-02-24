@@ -7,6 +7,7 @@
 %include "debug/debug.mac"
 
 extern debug_install_vga, debug_install_serial
+extern serial_put_char
 
 global debug_install
 debug_install:

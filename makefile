@@ -1,4 +1,4 @@
-NASMFLAGS := -f elf -i src/arch/i386/
+NASMFLAGS := -f elf -d DEBUG -i src/arch/i386/
 LDFLAGS   := -m elf_i386
 
 debug:
