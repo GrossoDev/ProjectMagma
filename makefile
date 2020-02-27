@@ -1,5 +1,5 @@
 NASMFLAGS := -f elf -d DEBUG -i src/arch/i386/
-LDFLAGS   := -m elf_i386
+LDFLAGS   := -m elf_i386 -Ttext 0x0
 
 debug:
 	make structure
@@ -30,6 +30,7 @@ i386-compile-debug:
 	nasm $(NASMFLAGS) -o build/1-compile/debug_install.o src/arch/i386/debug/debug_install.asm
 	nasm $(NASMFLAGS) -o build/1-compile/debug_vga_driver.o src/arch/i386/debug/debug_vga_driver.asm
 	nasm $(NASMFLAGS) -o build/1-compile/debug_serial_driver.o src/arch/i386/debug/debug_serial_driver.asm
+	nasm $(NASMFLAGS) -o build/1-compile/debug_print.o src/arch/i386/debug/debug_print.asm
 
 i386-link:
 	ld -T src/link.ld -o build/2-link/kernel.bin build/1-compile/*.o $(LDFLAGS)

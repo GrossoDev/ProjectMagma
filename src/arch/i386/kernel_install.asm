@@ -5,12 +5,13 @@
 %include "debug/debug.mac"
 
 global kernel_install
-
-
 kernel_install:
 %ifdef DEBUG
     mov eax, INSTALL_VGA | INSTALL_SERIAL
     call debug_install
+
+    printl 'Project Magma'
+    printl 'Debugging functions installed properly.'
 %endif
 
     jmp $

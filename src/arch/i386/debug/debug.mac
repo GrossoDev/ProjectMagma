@@ -7,6 +7,30 @@
     %ifndef DEBUG_INSTALL_ASM
         extern debug_install
     %endif
+    %ifndef DEBUG_PRINT_ASM
+        extern debug_print_string
+    %endif
 
+    ; Macro to print a string like if it where a real instruction.
+    %macro print 1+
+        section .data    ; At the end of the binary.
+    %%string:
+        db %1,0
+        section .text    ; Back to where we were.
+
+        mov si,%%string
+        call debug_print_string    ; Print it out using the debug_print_string function.
+    %endmacro
+
+    ; The same as above, but appends a Line Feed
+    %macro printl 1+
+        section .data    ; At the end of the binary.
+    %%string:
+        db %1,0x0A,0
+        section .text    ; Back to where we were.
+
+        mov si,%%string
+        call debug_print_string    ; Print it out using the debug_print_string function.
+    %endmacro
 %endif
 %endif
