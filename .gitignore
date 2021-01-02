@@ -4,3 +4,4 @@ build
 HELP
 dump.bin
 src/c/OTHERS
+/.vs/slnx.sqlite

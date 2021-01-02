@@ -14,4 +14,5 @@ kernel_install:
     printl 'Debugging functions installed properly.'
 %endif
 
+    hlt
     jmp $
